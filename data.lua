@@ -5,19 +5,19 @@ local stored_size = tonumber(settings.startup["train_loader_inventory_size"].val
 train_loader_entity.inventory_size = stored_size
 train_loader_entity.collision_box = {{-1.8, -1.8}, {1.8, 1.8}}
 train_loader_entity.selection_box = {{-1.85, -1.85}, {1.85, 1.85}}
-train_loader_entity.flags = {"get-by-unit-number"}
+train_loader_entity.flags = {"player-creation", "get-by-unit-number"}
 train_loader_entity.icon_draw_specification = {shift = {0, -3}, scale = 1.4, scale_for_many = 2.4}
 train_loader_entity.picture = {
     layers = {
         {
-            filename = "__TrainLoader__/graphics/shadow.png",
+            filename = "__train-loader__/graphics/shadow.png",
             priority = "extra-high",
             width = 1, -- I should probably render nothing instead of one pixel?
             height = 1,
             shift = util.by_pixel(0, -128),
         },
         {
-            filename = "__TrainLoader__/graphics/shadow.png",
+            filename = "__train-loader__/graphics/shadow.png",
             priority = "extra-high",
             draw_as_shadow = true,
             width = 384,
@@ -46,9 +46,50 @@ data:extend({
     {
         type = "sprite",
         name = "custom-silo-sprite",
-        filename = "__TrainLoader__/graphics/loader-silo.png",
+        filename = "__train-loader__/graphics/loader-silo.png",
         width = 124,  
         height = 384, 
         shift = util.by_pixel(0, -128),
     }
 })
+
+-- I really want to avoid compound entities and there has to be a better way to do this
+-- but this only loads for cybersyn so it's not too bad
+local invisible_inserter = table.deepcopy(data.raw["inserter"]["fast-inserter"])
+invisible_inserter.name = "invisible-inserter"
+invisible_inserter.minable = {result = "iron-plate", mining_time = 0.4, count = 0}
+invisible_inserter.collision_box = {{-0.15, -0.15}, {0.15, 0.15}}
+invisible_inserter.selection_box = {{-0.1, -0.1}, {0.1, 0.1}}
+invisible_inserter.hand_base_picture = {
+    filename = "__core__/graphics/empty.png",
+    priority = "extra-high",
+    width = 1,
+    height = 1,
+    frame_count = 1
+}
+invisible_inserter.hand_closed_picture = {
+    filename = "__core__/graphics/empty.png",
+    priority = "extra-high",
+    width = 1,
+    height = 1,
+    frame_count = 1
+}
+invisible_inserter.hand_open_picture = {
+    filename = "__core__/graphics/empty.png",
+    priority = "extra-high",
+    width = 1,
+    height = 1,
+    frame_count = 1
+}
+invisible_inserter.platform_picture = {
+    sheet = {
+        filename = "__core__/graphics/empty.png",
+        priority = "extra-high",
+        width = 1,
+        height = 1,
+        frame_count = 1
+    }
+}
+invisible_inserter.energy_source = {type = "void"}
+
+data:extend{invisible_inserter}
